@@ -16,7 +16,7 @@ Vue.filter('striphtml', function (value) {
 });
 
 Vue.filter('formatFacetKey', function (key, aggregationKey) {
-  if (ES.facetMap[aggregationKey].labels && ES.facetMap[aggregationKey].labels[key]) {
+  if (ES.facetMap[aggregationKey] && ES.facetMap[aggregationKey].labels && ES.facetMap[aggregationKey].labels[key]) {
     return ES.facetMap[aggregationKey].labels[key]
   }
   return key;

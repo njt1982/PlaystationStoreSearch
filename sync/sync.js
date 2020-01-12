@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-// require('events').EventEmitter.defaultMaxListeners = 205
+require('events').EventEmitter.defaultMaxListeners = 205
 
 require('dotenv').config({
   path: require('path').resolve(process.cwd(), 'sync', '.env')
@@ -57,7 +57,37 @@ function buildObj(data) {
     name: attr.name,
     genres: attr.genres,
     gameContentType: attr['game-content-type'],
-    platforms: attr.platforms
+    platforms: attr.platforms,
+    longDescription: attr['long-description'],
+    thumbnailBaseUrl: attr['thumbnail-url-base'],
+    releaseDate: attr['release-date'],
+    rating: attr['star-rating'].score,
+    // Default to single player, unless we can extract data to say otherwise.
+    minLocalPlayers: 1,
+    maxLocalPlayers: 1,
+    minNetworkPlayers: null,
+    maxNetworkPlayers: null,
+  }
+
+  if (doc.longDescription) {
+    // 1-4 players
+    // 1 - 4 players
+    const localPlayersRegex = doc.longDescription.match(/<br>((?<minLocalPlayers>\d+)\s{0,2}-\s{0,2})?(?<maxLocalPlayers>\d+) players?/mi)
+    if (localPlayersRegex) {
+      // eslint-disable-next-line no-unexpected-multiline
+      ['minLocalPlayers', 'maxLocalPlayers'].forEach(key => {
+        doc[key] = parseInt(localPlayersRegex.groups[key] || 1, 10)
+      })
+    }
+
+    //Network Players 2-4
+    const networkPlayersRegex = doc.longDescription.match(/<br>\s{0,2}network players ((?<minNetworkPlayers>\d+)\s{0,2}-\s{0,2})?(?<maxNetworkPlayers>\d+)/mi)
+    if (networkPlayersRegex) {
+      // eslint-disable-next-line no-unexpected-multiline
+      ['minNetworkPlayers', 'maxNetworkPlayers'].forEach(key => {
+        doc[key] = parseInt(networkPlayersRegex.groups[key] || 1, 10)
+      })
+    }
   }
 
   return [
@@ -82,12 +112,32 @@ function buildObj(data) {
   await elasticClient.indices.create({
     index: process.env.ELASTIC_INDEX,
     body: {
+      settings : {
+        analysis : {
+          analyzer: {
+            htmlStripAnalyzer: {
+              type: 'custom',
+              tokenizer: 'standard',
+              filter: ['standard', 'lowercase'],
+              char_filter: [
+                'html_strip'
+              ]
+            }
+          }
+        }
+      },
       mappings : {
         properties : {
           name : { type : 'text' },
+          longDescription : { type: 'text', analyzer: 'htmlStripAnalyzer' },
           genres : { type : 'keyword' },
           gameContentType : { type: 'keyword' },
-          platforms : { type : 'keyword' }
+          platforms : { type : 'keyword' },
+          thumbnailBaseUrl : { type : 'keyword' },
+          releaseDate : { type : 'date' },
+          rating : { type : 'half_float' },
+          minLocalPlayers : { type : 'byte' },
+          maxLocalPlayers : { type : 'byte' },
         }
       }
     }

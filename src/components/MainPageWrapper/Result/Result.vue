@@ -1,7 +1,8 @@
 <template>
   <div class="resultWrapper">
     <div class="result">
-      <h3><a :href="hit._source.url">{{ hit._source.name }}</a></h3>
+      <img v-bind:src="hit._source.thumbnailBaseUrl + '?w=400'" v-bind:alt="hit._source.name">
+      <p class="title"><a :href="'https://store.playstation.com/en-gb/product/' + hit._id" target="_blank">{{ hit._source.name }}</a></p>
       <p class="badge-group">
         <span v-if="hit._source.development_status" class="badge badge-pill badge-secondary">
           <i class="fa fa-code"></i> {{ hit._source.development_status | formatFacetKey('development_status') }}
@@ -10,13 +11,17 @@
           v-for="genre in hit._source.genres"
           :key="genre"
           class="badge badge-pill badge-secondary">
-          <i class="fa fa-tag"></i> {{ genre | formatFacetKey('genre') }}
+          <i class="fa fa-tag"></i> {{ genre | formatFacetKey('genres') }}
         </span>
         <span
-          v-for="platform in hit._source.platform"
+          v-for="platform in hit._source.platforms"
           :key="platform"
           class="badge badge-pill badge-secondary">
-          <i class="fa fa-tag"></i> {{ platform | formatFacetKey('platform') }}
+          <i class="fa fa-tag"></i> {{ platform }}
+        </span>
+        <span
+          class="badge badge-pill badge-secondary">
+          <i class="fa fa-star"></i> {{ hit._source.rating }}
         </span>
       </p>
       <p class="small body" v-if="hit.highlight">{{ hit.highlight.body[0] | striphtml }}</p>

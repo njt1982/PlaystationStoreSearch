@@ -5,13 +5,30 @@ const client = new es.Client({
 });
 
 const facetMap = {
-  genres: { fieldName: 'genres', title: 'Genres' },
+  genres: { fieldName: 'genres', title: 'Genres', labels: {
+    'Role-Playing Games (RPG)': 'RPG',
+    'MUSIC/RHYTHM': 'Music'
+  }},
   gameContentType: { fieldName: 'gameContentType', title: 'Game Type' },
   platforms: { fieldName: 'platforms', title: 'Platforms' },
+  minLocalPlayers: { fieldName: 'minLocalPlayers', title: 'Min Players' },
+  maxLocalPlayers: { fieldName: 'maxLocalPlayers', title: 'Max Players' },
+  minNetworkPlayers: { fieldName: 'minNetworkPlayers', title: 'Min Online Players' },
+  maxNetworkPlayers: { fieldName: 'maxNetworkPlayers', title: 'Max Online Players' },
+  rating: { fieldName: 'rating', title: 'Rating', facetType: 'range', facetOptions: {
+    keyed: true,
+    ranges: [
+      { key: '1-star', from: 0.0, to: 1.5 },
+      { key: '2-star', from: 1.5, to: 2.5 },
+      { key: '3-star', from: 2.5, to: 3.5 },
+      { key: '4-star', from: 3.5, to: 4.5 },
+      { key: '5-star', from: 4.5, to: 5.0 }
+    ]
+  }}
 };
 const activeFacets = {};
 const query = '';
-const pageLength = 18;
+const pageLength = 18  ;
 
 function search(page) {
   let queryString = '*';
@@ -36,8 +53,30 @@ function search(page) {
             .map((key) => {
               const facet = activeFacets[key];
               if (facet !== null && facet !== undefined && facet.length > 0) {
-                const data = { terms: {} };
-                data.terms[facetMap[key].fieldName] = facet;
+                const facetType = facetMap[key].facetType || 'terms'
+                const data = {};
+                data[facetType] = {}
+                if (facetType === 'range') {
+                  data[facetType][facetMap[key].fieldName] = {}
+                  const r = data[facetType][facetMap[key].fieldName]
+                  facet.forEach(rangeKey => {
+                    const selectedRangeFacet = facetMap[key].facetOptions.ranges.find(range => range.key === rangeKey)
+                    if (selectedRangeFacet.from !== undefined) {
+                      if (r.gte === undefined || r.gte > selectedRangeFacet.from) {
+                        r.gte = selectedRangeFacet.from
+                      }
+                    }
+
+                    if (selectedRangeFacet.to !== undefined) {
+                      if (r.lte === undefined || r.lte < selectedRangeFacet.to) {
+                        r.lte = selectedRangeFacet.to
+                      }
+                    }
+                  })
+                }
+                else {
+                  data[facetType][facetMap[key].fieldName] = facet;
+                }
                 return data;
               }
               return null;
@@ -46,33 +85,41 @@ function search(page) {
         },
       },
       // explain: true,
-      highlight: {
-        fields: { body: {} },
-      },
       aggregations: Object.keys(facetMap).reduce((previous, key) => {
         // eslint-disable-next-line no-param-reassign
-        previous[key] = {
-          terms: { field: facetMap[key].fieldName },
+        const facetType = facetMap[key].facetType || 'terms'
+        previous[key] = {}
+        previous[key][facetType] = {
+          field: facetMap[key].fieldName,
+          ...(facetMap[key].facetOptions || {})
         };
         return previous;
       }, {}),
     },
   }).then((resp) => ({
     hits: resp.hits,
-    aggregations: Object.keys(resp.aggregations).map((key) => ({
-      key,
-      name: facetMap[key].title,
-      items: resp.aggregations[key].buckets.map((bucket) => {
-        const newBucket = bucket;
-        // Add in a 'refined' key to buckets which exist in our facet list.
-        newBucket.refined = false;
-        if (activeFacets[key]) {
-          newBucket.refined = activeFacets[key].indexOf(bucket.key) !== -1;
-        }
-        return newBucket;
-      }),
-      isRefined: !!activeFacets[key] && activeFacets[key].length,
-    })),
+    aggregations: Object.keys(resp.aggregations).map((key) => {
+      const buckets = Array.isArray(resp.aggregations[key].buckets)
+        ? resp.aggregations[key].buckets
+        : Object.keys(resp.aggregations[key].buckets).map(bucketKey => ({
+          key: bucketKey,
+          ...resp.aggregations[key].buckets[bucketKey]
+        }))
+      return {
+        key,
+        name: facetMap[key].title,
+        items: buckets.map((bucket) => {
+          const newBucket = bucket;
+          // Add in a 'refined' key to buckets which exist in our facet list.
+          newBucket.refined = false;
+          if (activeFacets[key]) {
+            newBucket.refined = activeFacets[key].indexOf(bucket.key) !== -1;
+          }
+          return newBucket;
+        }),
+        isRefined: !!activeFacets[key] && activeFacets[key].length,
+      }
+    }),
   }));
 }
 
