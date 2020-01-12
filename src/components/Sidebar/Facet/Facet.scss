@@ -1,0 +1,48 @@
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
+
+.card {
+  border-radius: 0;
+  border-width: 0;
+}
+.card-header {
+  cursor: pointer;
+  background-color: $gray-900;
+  color: $gray-100;
+  border: 0;
+  border-radius: 0;
+
+  &:hover {
+    background: $gray-800;
+  }
+  .icon {
+    @include fa-icon;
+    @extend .fa-chevron-down;
+    margin-right: 0.5rem;
+  }
+  &.collapsed {
+    .icon {
+      @extend .fa-chevron-right;
+    }
+  }
+}
+.list-group {
+  border:0;
+}
+.list-group-item {
+  line-height: 1;
+  cursor: pointer;
+  background-color: $gray-700;
+  border:0;
+  border-radius:0;
+
+  &:hover {
+    background: $gray-800;
+  }
+  &.refined {
+    background-color: $primary;
+    .badge {
+      background-color: lighten($primary, 20%);
+    }
+  }
+}

@@ -1,0 +1,41 @@
+// $card-bg: transparent;
+
+// @import "node_modules/bootstrap/scss/bootstrap.scss";
+
+body {
+  background-color: $gray-100;
+  font-family: 'Droid Sans', sans-serif;
+}
+
+.browserupgrade {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* Custom page header */
+.header {
+  /* Make the masthead heading the same height as the navigation */
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 40px;
+    padding-bottom: 19px;
+  }
+}
+
+/* Custom page footer */
+.footer {
+  padding-top: 19px;
+  color: #777;
+  border-top: 1px solid #e5e5e5;
+  p {
+    font-size: 1.2em;
+    img {
+      max-height: 1em;
+    }
+  }
+}
+
+

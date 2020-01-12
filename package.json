@@ -1,0 +1,72 @@
+{
+  "name": "ps_store_search",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PS Store Search",
+  "author": "Nicholas Thompson <njt1982@gmail.com>",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "deploy": "npm run build; push-dir --dir=dist --branch=master --cleanup",
+    "sync": "node sync/sync.js"
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0",
+    "bootstrap-vue": "^2.0",
+    "core-js": "^2.6.5",
+    "elasticsearch-browser": "^16.4.0",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.5",
+    "popper.js": "^1.12.9",
+    "vue": "^2.6.10",
+    "vue-infinite-scroll": "^2.0.2",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "@elastic/elasticsearch": "^7.4.0",
+    "@vue/cli-plugin-babel": "^3.12.0",
+    "@vue/cli-plugin-eslint": "^3.12.0",
+    "@vue/cli-service": "^3.12.0",
+    "babel-eslint": "^10.0.1",
+    "dotenv": "^8.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "got": "^10",
+    "keyv": "^3.1.0",
+    "keyv-file": "^0.1.13",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.36.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  }
+}

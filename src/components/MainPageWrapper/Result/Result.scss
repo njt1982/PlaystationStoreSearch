@@ -1,0 +1,46 @@
+.resultWrapper {
+  @include make-col-ready();
+
+  @include media-breakpoint-up(md) { @include make-col(12) }
+  @include media-breakpoint-up(lg) { @include make-col(6) }
+  @include media-breakpoint-up(xl) { @include make-col(4) }
+}
+.sidebarToggled {
+  .resultWrapper {
+    @include media-breakpoint-up(md) { @include make-col(6) }
+    @include media-breakpoint-up(lg) { @include make-col(4) }
+    @include media-breakpoint-up(xl) { @include make-col(3) }
+  }
+}
+.result {
+  margin:0 0 20px;
+  padding: 20px;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 1px 3px #aaa;
+  h3 {
+    margin-top: 0;
+    font-weight: bold;
+  }
+  .url {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  p {
+    margin-bottom: 0.5rem;
+    &.body {
+      font-style: italic;
+      color: $gray-600;
+    }
+    &.badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      // align-items: flex-start;
+      .badge {
+        font-weight: normal;
+        margin: 0 0.5em 0.5em 0;
+        flex: 1;
+      }
+    }
+  }
+}

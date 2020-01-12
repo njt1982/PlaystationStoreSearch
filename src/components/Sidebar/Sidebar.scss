@@ -1,0 +1,120 @@
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
+
+$expanded-size: 360px;
+$collapsed-size: 64px;
+
+#sidebar-wrapper {
+  background: #000;
+  color: $gray-100;
+}
+#wrapper {
+  @include transition(all 0.5s ease);
+}
+@media(max-width:767px) {
+  #wrapper {
+    #sidebar-wrapper {
+      @include transition(all 0.5s ease);
+      height: 36px;
+      overflow: hidden;
+    }
+    &.sidebarToggled {
+      #sidebar-wrapper {
+        height: auto;
+      }
+    }
+  }
+}
+
+
+#menu-toggle {
+  color: $gray-100;
+  font-size: 2em;
+  cursor: pointer;
+  &:focus {
+    outline: 0;
+  }
+}
+
+@media(min-width:768px) {
+  #wrapper {
+    padding-left: 0;
+
+    &.sidebarToggled {
+      padding-left: $expanded-size;
+      #sidebar-wrapper {
+        width: $expanded-size;
+      }
+      #page-content-wrapper {
+        position: absolute;
+        margin-right: -$expanded-size;
+      }
+    }
+  }
+
+  #sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: $expanded-size;
+    width: 0;
+    height: 100%;
+    margin-left: -$expanded-size;
+    overflow-y: auto;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    .container-fluid {
+      width: $expanded-size;
+      padding: 15px;
+    }
+  }
+
+  #page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 15px;
+  }
+
+  #wrapper {
+    padding-left: $expanded-size;
+    &.sidebarToggled {
+      padding-left: $collapsed-size;
+      #sidebar-wrapper {
+        width: $collapsed-size;
+      }
+      #page-content-wrapper {
+        position: relative;
+        margin-right: $collapsed-size;
+      }
+    }
+  }
+
+  #sidebar-wrapper {
+    width: $expanded-size;
+  }
+
+  #page-content-wrapper {
+    padding: 20px;
+    position: relative;
+  }
+}
+
+#searchbox {
+  background-color: $gray-900;
+  border: 0;
+  border-radius: 0;
+  color: $gray-100;
+  box-shadow: none;
+  @include transition(all .2s ease-in-out);
+  &:focus {
+    background-color: $gray-800;
+  }
+}
+#sidebar-wrapper {
+  .input-group-text {
+    background-color: $gray-900;
+    border: 0;
+    color: $gray-100;
+  }
+}
