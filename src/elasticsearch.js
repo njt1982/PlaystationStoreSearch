@@ -1,4 +1,5 @@
 import es from 'elasticsearch-browser/elasticsearch';
+import CONFIG from './config.js'
 
 const client = new es.Client({
   host: 'https://elastic.thingy-ma-jig.co.uk/',
@@ -37,7 +38,7 @@ function search(page) {
   }
 
   return client.search({
-    index: 'local_ps_store',
+    index: CONFIG.ELASTIC_INDEX,
     body: {
       from: page * pageLength,
       size: pageLength,
