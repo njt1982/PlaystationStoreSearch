@@ -6,9 +6,7 @@ require('dotenv').config({
   path: require('path').resolve(process.cwd(), 'sync', '.env')
 });
 const API_BASE_URI = 'https://store.playstation.com/valkyrie-api/en/GB/19/container/';
-// STORE-MSF75508-FULLGAMES?size=30&bucket=games&start=30
 const MAX_PAGES = parseInt(process.env.MAX_PAGES, 10) || 3;
-// const LIMIT = parseInt(process.env.LIMIT, 10) || 10;
 const START_PAGE = parseInt(process.env.START_PAGE, 10) || 0;
 const PER_PAGE = parseInt(process.env.PER_PAGE, 10) || 30;
 
