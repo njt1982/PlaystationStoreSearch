@@ -60,29 +60,30 @@ function buildObj(data) {
     thumbnailBaseUrl: attr['thumbnail-url-base'],
     releaseDate: attr['release-date'],
     rating: attr['star-rating'].score,
-    // Default to single player, unless we can extract data to say otherwise.
-    minLocalPlayers: 1,
     maxLocalPlayers: 1,
-    minNetworkPlayers: null,
     maxNetworkPlayers: null,
   }
 
   if (doc.longDescription) {
+    // Eg:
     // 1-4 players
     // 1 - 4 players
     const localPlayersRegex = doc.longDescription.match(/<br>((?<minLocalPlayers>\d+)\s{0,2}-\s{0,2})?(?<maxLocalPlayers>\d+) players?/mi)
     if (localPlayersRegex) {
+      // No longer doing minLocalPlayers (almost always 1)
       // eslint-disable-next-line no-unexpected-multiline
-      ['minLocalPlayers', 'maxLocalPlayers'].forEach(key => {
+      ['maxLocalPlayers'].forEach(key => {
         doc[key] = parseInt(localPlayersRegex.groups[key] || 1, 10)
       })
     }
 
-    //Network Players 2-4
+    // Eg:
+    // Network Players 2-4
     const networkPlayersRegex = doc.longDescription.match(/<br>\s{0,2}network players ((?<minNetworkPlayers>\d+)\s{0,2}-\s{0,2})?(?<maxNetworkPlayers>\d+)/mi)
     if (networkPlayersRegex) {
+      // No longer doing minNetworkPlayers (almost always 1)
       // eslint-disable-next-line no-unexpected-multiline
-      ['minNetworkPlayers', 'maxNetworkPlayers'].forEach(key => {
+      ['maxNetworkPlayers'].forEach(key => {
         doc[key] = parseInt(networkPlayersRegex.groups[key] || 1, 10)
       })
     }
@@ -112,13 +113,48 @@ function buildObj(data) {
     body: {
       settings : {
         analysis : {
+          filter: {
+            english_stop: {
+              type: "stop",
+              stopwords: "_english_"
+            },
+            english_keywords: {
+              type: "keyword_marker",
+              keywords: ["lazy"] // stem_exclusion
+            },
+            english_stemmer: {
+              type: "stemmer",
+              language: "english"
+            },
+            english_possessive_stemmer: {
+              type: "stemmer",
+              language: "possessive_english"
+            }
+          },
           analyzer: {
-            htmlStripAnalyzer: {
+            html_strip_analyzer: {
               type: 'custom',
               tokenizer: 'standard',
-              filter: ['standard', 'lowercase'],
+              filter: [
+                'standard',
+                'lowercase',
+                'english_possessive_stemmer',
+                'english_stop',
+                'english_keywords',
+                'english_stemmer'
+               ],
               char_filter: [
                 'html_strip'
+              ]
+            },
+            rebuilt_english: {
+              tokenizer:  "standard",
+              filter: [
+                'english_possessive_stemmer',
+                'lowercase',
+                'english_stop',
+                'english_keywords',
+                'english_stemmer'
               ]
             }
           }
@@ -126,8 +162,8 @@ function buildObj(data) {
       },
       mappings : {
         properties : {
-          name : { type : 'text' },
-          longDescription : { type: 'text', analyzer: 'htmlStripAnalyzer' },
+          name : { type : 'text', analyzer: 'rebuilt_english' },
+          longDescription : { type: 'text', analyzer: 'html_strip_analyzer' },
           genres : { type : 'keyword' },
           gameContentType : { type: 'keyword' },
           platforms : { type : 'keyword' },

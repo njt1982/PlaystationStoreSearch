@@ -6,16 +6,14 @@ const client = new es.Client({
 });
 
 const facetMap = {
+  platforms: { fieldName: 'platforms', title: 'Platforms' },
   genres: { fieldName: 'genres', title: 'Genres', labels: {
     'Role-Playing Games (RPG)': 'RPG',
     'MUSIC/RHYTHM': 'Music'
   }},
-  gameContentType: { fieldName: 'gameContentType', title: 'Game Type' },
-  platforms: { fieldName: 'platforms', title: 'Platforms' },
-  minLocalPlayers: { fieldName: 'minLocalPlayers', title: 'Min Players' },
-  maxLocalPlayers: { fieldName: 'maxLocalPlayers', title: 'Max Players' },
-  minNetworkPlayers: { fieldName: 'minNetworkPlayers', title: 'Min Online Players' },
-  maxNetworkPlayers: { fieldName: 'maxNetworkPlayers', title: 'Max Online Players' },
+  contentType: { fieldName: 'gameContentType', title: 'Game Type' },
+  localPlayers: { fieldName: 'maxLocalPlayers', title: 'Local Players' },
+  networkPlayers: { fieldName: 'maxNetworkPlayers', title: 'Network Players' },
   rating: { fieldName: 'rating', title: 'Rating', facetType: 'range', facetOptions: {
     keyed: true,
     ranges: [
@@ -47,7 +45,7 @@ function search(page) {
           must: {
             simple_query_string: {
               query: queryString,
-              fields: ['name^10'],
+              fields: ['name^10', 'longDescription^1'],
             },
           },
           filter: Object.keys(activeFacets)

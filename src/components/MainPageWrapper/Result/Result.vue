@@ -1,8 +1,10 @@
 <template>
   <div class="resultWrapper">
     <div class="result">
-      <img v-bind:src="hit._source.thumbnailBaseUrl + '?w=400'" v-bind:alt="hit._source.name">
-      <p class="title"><a :href="'https://store.playstation.com/en-gb/product/' + hit._id" target="_blank">{{ hit._source.name }}</a></p>
+      <a :href="'https://store.playstation.com/en-gb/product/' + hit._id" v-bind:title="hit._source.name" target="_blank">
+        <img v-bind:src="hit._source.thumbnailBaseUrl + '?w=400'" v-bind:alt="hit._source.name">
+        <p class="title">{{ hit._source.name }}</p>
+      </a>
       <p class="badge-group">
         <span v-if="hit._source.development_status" class="badge badge-pill badge-secondary">
           <i class="fa fa-code"></i> {{ hit._source.development_status | formatFacetKey('development_status') }}

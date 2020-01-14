@@ -3,6 +3,7 @@
        v-bind:class="{ sidebarToggled: sidebarExpanded }"
        v-infinite-scroll="loadMore"
        infinite-scroll-disabled="busy"
+       infinite-scroll-listen-for-event="doCheck"
        infinite-scroll-distance="10">
     <Sidebar
       v-on:toggleSidebar="toggleSidebar"
@@ -104,6 +105,13 @@ export default {
     },
   },
   watch: {
+    'searchInProgress': {
+      handler(isInProgress) {
+        if (!isInProgress) {
+          this.$emit('doCheck')
+        }
+      }
+    },
     '$route.params': {
       immediate: true,
       handler(routeParams) {

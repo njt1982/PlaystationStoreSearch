@@ -28,7 +28,7 @@
           <div id="searchSummary"></div>
           <div id="searchFacets">
             <Facet
-              v-for="aggregation in aggregations"
+              v-for="aggregation in sortedAggregations"
               :aggregation="aggregation"
               :key="aggregation.id"
               v-on:toggleFacet="toggleFacet"
@@ -68,6 +68,21 @@ export default {
     },
   },
   computed: {
+    sortedAggregations() {
+      if (!this.aggregations) {
+        return []
+      }
+
+      return Object
+        .keys(ES.facetMap)
+        .reduce((acc, key) => {
+          const agg = this.aggregations.find(a => a.key === key)
+          if (agg) {
+            acc.push(agg)
+          }
+          return acc
+        }, [])
+    },
     runSearch() {
       return _debounce(function inputCaptured(e) {
         this.$emit('runSearch', e.srcElement.value);
