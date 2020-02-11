@@ -11,16 +11,46 @@ $collapsed-size: 64px;
 #wrapper {
   @include transition(all 0.5s ease);
 }
-@media(max-width:767px) {
+@include media-breakpoint-down(sm) {
   #wrapper {
     #sidebar-wrapper {
       @include transition(all 0.5s ease);
-      height: 36px;
+      position: sticky;
+      height: 3rem;
+
       overflow: hidden;
+      overflow-y: scroll;
+
+      // @TODO - try to @extend .sticky-top?
+      position: sticky;
+      top: 0;
+      z-index: $zindex-sticky;
+
+      opacity: 0.75;
+
+      .form-group {
+        position: absolute;
+        top: -2.6em;
+        left: 3.5em;
+        right: 15px;
+        margin: 0;
+        .input-group {
+          // @TODO - cant extend :(;
+          // @extend .input-group-sm;
+          & > .form-control,
+          & > .input-group-prepend > .input-group-text {
+            padding: $input-padding-y-sm $input-padding-x-sm;
+            @include font-size($input-font-size-sm);
+            line-height: $input-line-height-sm;
+            @include border-radius($input-border-radius-sm);
+          }
+        }
+      }
     }
     &.sidebarToggled {
       #sidebar-wrapper {
-        height: auto;
+        height: 50vh;
+        opacity: 1;
       }
     }
   }

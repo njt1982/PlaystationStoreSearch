@@ -21,9 +21,14 @@
           class="badge badge-pill badge-secondary">
           <i class="fa fa-tag"></i> {{ platform }}
         </span>
-        <span
-          class="badge badge-pill badge-secondary">
+        <span v-if="hit._source.rating" class="badge badge-pill badge-secondary">
           <i class="fa fa-star"></i> {{ hit._source.rating }}
+        </span>
+        <span v-if="hit._source.maxLocalPlayers" class="badge badge-pill badge-secondary">
+          <i class="fa fa-user"></i>&nbsp;<i class="fa fa-home"></i> {{ hit._source.maxLocalPlayers }}
+        </span>
+        <span v-if="hit._source.maxNetworkPlayers" class="badge badge-pill badge-secondary">
+          <i class="fa fa-user"></i>&nbsp;<i class="fa fa-globe"></i> {{ hit._source.maxNetworkPlayers }}
         </span>
       </p>
       <p class="small body" v-if="hit.highlight">{{ hit.highlight.body[0] | striphtml }}</p>
