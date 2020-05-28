@@ -18,9 +18,4 @@ const router = new Router({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  document.title = 'Playstation Store Search'
-  next()
-})
-
 export default router
