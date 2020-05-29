@@ -136,7 +136,6 @@ function buildObj(data) {
               type: 'custom',
               tokenizer: 'standard',
               filter: [
-                'standard',
                 'lowercase',
                 'english_possessive_stemmer',
                 'english_stop',
